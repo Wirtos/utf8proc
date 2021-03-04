@@ -34,3 +34,5 @@
 /msvc_shared/
 /msvc_static/
 /build/
+.idea/
+cmake-build-*/
