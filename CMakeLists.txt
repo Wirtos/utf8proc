@@ -65,7 +65,7 @@ install(EXPORT
         )
 
 
-if (1)
+if (UTF8PROC_ENABLE_TESTING)
     enable_testing()
     file(MAKE_DIRECTORY data)
     set(UNICODE_VERSION 13.0.0)
