@@ -77,37 +77,12 @@
 /** @} */
 
 #include <stdlib.h>
+#include <stddef.h>
+#include <limits.h>
+#include <utf8proc_export.h>
 
-#if defined(_MSC_VER) && _MSC_VER < 1800
-// MSVC prior to 2013 lacked stdbool.h and inttypes.h
-typedef signed char utf8proc_int8_t;
-typedef unsigned char utf8proc_uint8_t;
-typedef short utf8proc_int16_t;
-typedef unsigned short utf8proc_uint16_t;
-typedef int utf8proc_int32_t;
-typedef unsigned int utf8proc_uint32_t;
-#  ifdef _WIN64
-typedef __int64 utf8proc_ssize_t;
-typedef unsigned __int64 utf8proc_size_t;
-#  else
-typedef int utf8proc_ssize_t;
-typedef unsigned int utf8proc_size_t;
-#  endif
-#  ifndef __cplusplus
-// emulate C99 bool
-typedef unsigned char utf8proc_bool;
-#    ifndef __bool_true_false_are_defined
-#      define false 0
-#      define true 1
-#      define __bool_true_false_are_defined 1
-#    endif
-#  else
-typedef bool utf8proc_bool;
-#  endif
-#else
-#  include <stddef.h>
-#  include <stdbool.h>
-#  include <inttypes.h>
+#include <stdint.h>
+#include <stdbool.h>
 typedef int8_t utf8proc_int8_t;
 typedef uint8_t utf8proc_uint8_t;
 typedef int16_t utf8proc_int16_t;
@@ -117,9 +92,7 @@ typedef uint32_t utf8proc_uint32_t;
 typedef size_t utf8proc_size_t;
 typedef ptrdiff_t utf8proc_ssize_t;
 typedef bool utf8proc_bool;
-#endif
-#include <limits.h>
-#include <utf8proc_export.h>
+
 
 #ifdef __cplusplus
 extern "C" {
