@@ -13,7 +13,6 @@ set(SO_MAJOR 2)
 set(SO_MINOR 4)
 set(SO_PATCH 1)
 
-option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
 option(LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off)
 option(BUILD_SHARED_LIBS "Whether to build shared or dynamic library" Off)
