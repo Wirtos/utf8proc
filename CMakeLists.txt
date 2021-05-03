@@ -1,10 +1,16 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
-include(utils.cmake)
+include(cmake/PreventInSourceBuild.cmake)
+prevent_in_source_build()
 
-disallow_intree_builds()
+include(cmake/GetVersionFromMacro.cmake)
+get_version_from_macro(
+        HEADER utf8proc.h
+        PREFIX UTF8PROC_VERSION_
+        VERSIONS MAJOR MINOR PATCH
+        OUTPUT UTF8PROC_VER)
 
-project(utf8proc C)
+project(utf8proc LANGUAGES C VERSION "${UTF8PROC_VER}")
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h).
@@ -13,14 +19,17 @@ set(SO_MAJOR 2)
 set(SO_MINOR 4)
 set(SO_PATCH 1)
 
+include(CMakeDependentOption)
+
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
-option(LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off)
+# only display this option if UTF8PROC_ENABLE_TESTING is truthy
+cmake_dependent_option(
+       LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off "UTF8PROC_ENABLE_TESTING" Off
+)
 option(BUILD_SHARED_LIBS "Whether to build shared or dynamic library" Off)
 
-add_library(utf8proc
-        utf8proc.c
-        utf8proc.h
-        )
+
+add_library(${PROJECT_NAME} utf8proc.c)
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
@@ -51,6 +60,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 install(TARGETS
         ${PROJECT_NAME}
         EXPORT UTF8ProcConfig
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
 
 export(TARGETS
@@ -63,7 +76,7 @@ install(EXPORT
         DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake"
         )
 
-
+# might clean this mess up later
 if (UTF8PROC_ENABLE_TESTING)
     enable_testing()
     file(MAKE_DIRECTORY data)
