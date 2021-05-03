@@ -37,5 +37,5 @@ function(get_version_from_macro)
     endforeach()
 
     string(JOIN "." HEADER_VER ${HEADER_VER})
-    set(${OUTPUT} ${HEADER_VER} PARENT_SCOPE)
+    set(${LOCAL_OUTPUT} ${HEADER_VER} PARENT_SCOPE)
 endfunction()
