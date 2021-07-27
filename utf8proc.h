@@ -79,10 +79,10 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <limits.h>
-#include <utf8proc_export.h>
-
 #include <stdint.h>
 #include <stdbool.h>
+#include "utf8proc_export.h"
+
 typedef int8_t utf8proc_int8_t;
 typedef uint8_t utf8proc_uint8_t;
 typedef int16_t utf8proc_int16_t;

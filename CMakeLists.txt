@@ -10,7 +10,13 @@ get_version_from_macro(
         VERSIONS MAJOR MINOR PATCH
         OUTPUT UTF8PROC_VER)
 
-project(utf8proc LANGUAGES C VERSION "${UTF8PROC_VER}")
+project(utf8proc
+        LANGUAGES C
+        VERSION "${UTF8PROC_VER}")
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h).
@@ -24,9 +30,13 @@ include(CMakeDependentOption)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
 # only display this option if UTF8PROC_ENABLE_TESTING is truthy
 cmake_dependent_option(
-       LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off "UTF8PROC_ENABLE_TESTING" Off
+        LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off "UTF8PROC_ENABLE_TESTING" Off
 )
 option(BUILD_SHARED_LIBS "Whether to build shared or dynamic library" Off)
+
+if (${CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT})
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
+endif ()
 
 
 add_library(${PROJECT_NAME} utf8proc.c)
@@ -34,14 +44,10 @@ add_library(${PROJECT_NAME} utf8proc.c)
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
 
-if (${CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT})
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "" FORCE)
-endif ()
-
 include(GNUInstallDirs)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
@@ -57,22 +63,19 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
         SOVERSION ${SO_MAJOR})
 
-install(TARGETS
-        ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME}
         EXPORT UTF8ProcConfig
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${PROJECT_NAME}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
         )
 
-export(TARGETS
-        ${PROJECT_NAME}
+export(TARGETS ${PROJECT_NAME}
         FILE "${CMAKE_CURRENT_BINARY_DIR}/UTF8ProcConfig.cmake"
         )
 
-install(EXPORT
-        UTF8ProcConfig
+install(EXPORT UTF8ProcConfig
         DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake"
         )
 
