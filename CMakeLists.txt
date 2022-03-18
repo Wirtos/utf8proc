@@ -19,12 +19,17 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
+if (POLICY CMP0048)
+    cmake_policy(SET CMP0048 NEW)
+endif ()
+project(utf8proc VERSION 2.7.0 LANGUAGES C)
+
 # This is the ABI version number, which may differ from the
-# API version number (defined in utf8proc.h).
+# API version number (defined in utf8proc.h and above).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 2)
-set(SO_MINOR 4)
-set(SO_PATCH 1)
+set(SO_MINOR 5)
+set(SO_PATCH 0)
 
 include(CMakeDependentOption)
 
@@ -38,7 +43,6 @@ option(BUILD_SHARED_LIBS "Whether to build shared or dynamic library" Off)
 if (${CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT})
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
 endif ()
-
 
 add_library(${PROJECT_NAME} utf8proc.c)
 
@@ -82,11 +86,10 @@ install(EXPORT ${PACKAGE_NAME}Config
         DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake"
         )
 
-# might clean this mess up later
 if (UTF8PROC_ENABLE_TESTING)
     enable_testing()
     file(MAKE_DIRECTORY data)
-    set(UNICODE_VERSION 13.0.0)
+    set(UNICODE_VERSION 14.0.0)
     file(DOWNLOAD https://www.unicode.org/Public/${UNICODE_VERSION}/ucd/NormalizationTest.txt ${CMAKE_BINARY_DIR}/data/NormalizationTest.txt SHOW_PROGRESS)
     file(DOWNLOAD https://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakTest.txt ${CMAKE_BINARY_DIR}/data/GraphemeBreakTest.txt SHOW_PROGRESS)
     add_executable(case test/tests.h test/tests.c utf8proc.h test/case.c)
